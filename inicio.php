@@ -1,11 +1,15 @@
 <?php
-
-// siempre iniciamos 
+// Siempre iniciamos sesion
 session_start();
 
-$inputUsu = $_GET['usuario'];
-$inputCla = $_GET['clave'];
+if ( isset( $_SESSION['user_id'] ) ) {
+    // estamos logeados correctamente. Podemos mostrar contenido, caso contrario nos vamos a login.php
+?>
+<html>
+<body>
+<?php echo "Bienvenido: ".$_SESSION['user_tipo']." - ".$_SESSION['user_nombre'];?>
 
+<?php 
 $conexion = mysqli_connect("localhost", "root", "", "mi_prueba");
 
 if(! $conexion ) {
@@ -13,7 +17,8 @@ if(! $conexion ) {
     die();
 }
 
-$sql = "SELECT * FROM usuario WHERE nombre_usr='$inputUsu' AND password='$inputCla';";
+$sql = "SELECT * FROM materia_has_estudiante WHERE Estudiante_rude='".$_SESSION['user_id']."'";
+echo $sql; die();
 $resultado = mysqli_query($conexion, $sql);
 if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
     // existe un registro con ese usuario y clave
@@ -32,13 +37,13 @@ if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
         $destino = "";
         if( is_null( $fila['Docente_idDocente'] ) ) {
             $_SESSION['user_tipo'] = 'Estudiante';
-            $_SESSION['user_nombre'] = $fila['nombre_usr'];
+            $_SESSION['user_nombre'] = $fila['nombre_est'].' '.$fila['app_est'].' '.$fila['apm_est'];
             header('Location: ./inicioEstudiante.php');
         }
         
         if( is_null( $fila['Estudiante_rude'] ) ) {
             $_SESSION['user_tipo'] = 'Docente';
-            $_SESSION['user_nombre'] = $fila['nombre_usr'];
+            $_SESSION['user_nombre'] = $fila['nombre_doc'].' '.$fila['app_doc'].' '.$fila['app'];
             header('Location: ./inicioDocente.php');
         }
     } else {
@@ -50,4 +55,24 @@ if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
     header('Location: ./login.php');
 }
 mysqli_close($conexion);
+?>
+
+Materia: 
+<select name="materia">
+   <option value="0">Please Select Option</option>
+   <option value="PHP">PHP</option>
+   <option value="ASP">ASP</option>
+</select>
+
+<?php 
+  }
+?>
+
+</body>
+</html>
+<?php
+} else {
+    // Redirigimos a login
+    header("Location: ./login.php");
+}
 ?>
