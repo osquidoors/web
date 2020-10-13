@@ -11,7 +11,9 @@ if ( isset( $_SESSION['user_id'] ) ) {
 <br/>
 <hr/>
 Materia: 
-<select name="materia">
+<select id="materia" onchange="obtenerDocentes();">
+<!-- id es un identificador que utilizaremos para recuperar el valor seleccionado. 
+onchange es una funcion que al ver que se cambio el valor del combobox llamara a la funcion obtenerDocentes -->
     <option value="0">Seleccionar materia</option>
 <?php 
 $conexion = mysqli_connect("localhost", "root", "", "mi_prueba");
@@ -31,8 +33,21 @@ if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
 mysqli_close($conexion);
 ?>
 </select>
-
+<div id="comboboxDocente"></div>
 </body>
+<script type="text/javascript">  
+function obtenerDocentes() {
+    var materiaSeleccionada = document.getElementById("materia").value; // recuperamos el id del combobox seleccionado
+    var xmlhttp=new XMLHttpRequest(); // creamos una variable http
+    xmlhttp.onreadystatechange=function() {
+      if (this.readyState==4 && this.status==200) {
+        document.getElementById("comboboxDocente").innerHTML=this.responseText;
+      }
+    }
+    xmlhttp.open("GET", "obtenerDocente.php?materia=" + materiaSeleccionada, true);
+    xmlhttp.send();
+}
+</script>
 </html>
 <?php
 } else {
