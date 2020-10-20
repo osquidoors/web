@@ -1,25 +1,27 @@
 <?php
-/*$conexion = mysqli_connect("localhost", "root", "", "mi_prueba");
+// creamos un arreglo para retornar la respuesta
+$docentes = array();    //almacenará todos los campos de docente
+$docentes[] = "Seleccionar docente"; // lo primero que agregamos es el texto Seleccionar Docente
 
-if(! $conexion ) {
-    echo "Error en la conexion a MySQL: ".mysqli_error();
-    die();
+if(isset($_GET['idmateria'])){
+    $idmateria=$_GET['idmateria'];
+    $conexion = mysqli_connect("localhost", "root", "", "mi_prueba");
+    if(! $conexion ) {
+        echo "Error en la conexion a MySQL: ".mysqli_error();
+        die();
+    }
+
+    $sql = "SELECT d.idDocente, d.nombre_doc, d.app_doc, d.app FROM Docente d, materia_has_docente mhd, materia m WHERE m.idMateria='$idmateria' AND m.idMateria=mhd.Materia_idMateria AND d.idDocente=mhd.Docente_idDocente;";
+    // echo $sql; die();
+    // recuperamos todos los docentes que dictan una determinada materia
+    $resultado = mysqli_query($conexion, $sql);     //$resultado almacena todas las filas resultantes de la consulta
+    if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
+        while($fila = mysqli_fetch_assoc($resultado)) {     //recorre todas las filas encontradas
+            //$docentes[ $fila['idDocente'] ] = $fila['nombre_doc']; //docentes[idDocente] = nombre_doc
+            $docentes[ $fila['idDocente'] ] = $fila['nombre_doc'].' '.$fila['app_doc']; 
+        } // while
+    } // if empty
+    mysqli_close($conexion);
 }
-
-$sql = "SELECT m.* FROM materia_has_estudiante mhe, materia m WHERE mhe.Estudiante_rude='".$_SESSION['user_id']."' AND mhe.Materia_idMateria=m.idMateria;";
-$resultado = mysqli_query($conexion, $sql);
-if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
-    while($filas = mysqli_fetch_assoc($resultado)) {
-        echo '<option value="'.$filas['idMateria'].'">'.$filas['nombre_mat'].'</option>';
-    } // while
-} // if empty
-mysqli_close($conexion); */
-$combobox  = '<br/>Docente: ';
-$combobox .= '<select id="materia">';
-$combobox .= '<option value="1">Seleccionar Docente</option>';
-$combobox .= '<option value="2">Ximena</option>';
-$combobox .= '<option value="3">Dania</option>';
-$combobox .= '<option value="4">Magali</option>';
-$combobox .= '</selected>';
-echo $combobox;
+echo json_encode($docentes);    //json_encode es una función de PHP que convierte el arreglo $docentes en comprensible a javascript
 ?>

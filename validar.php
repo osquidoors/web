@@ -3,8 +3,8 @@
 // siempre iniciamos 
 session_start();
 
-$inputUsu = $_GET['usuario'];
-$inputCla = $_GET['clave'];
+$usuario = $_GET['usuario'];
+$clave = $_GET['clave'];
 
 $conexion = mysqli_connect("localhost", "root", "", "mi_prueba");
 
@@ -13,24 +13,14 @@ if(! $conexion ) {
     die();
 }
 
-$sql = "SELECT * FROM usuario WHERE nombre_usr='$inputUsu' AND password='$inputCla';";
-$resultado = mysqli_query($conexion, $sql);
+$sql = "SELECT * FROM usuario WHERE nombre_usr='$usuario' AND password='$clave';";
+$resultado = mysqli_query($conexion, $sql);     //$resultado es un arreglo que almacena el registro
 if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
     // existe un registro con ese usuario y clave
-    $contador = 0;
-    $fila = null;
-    while($filas = mysqli_fetch_assoc($resultado)) {
-        $contador++;
-        $fila = $filas;
-        // echo "id: " . $filas["id"]. " - Name: " . $filas["firstname"]. " " . $filas["lastname"]. "<br>";
-    }
-
-    if( $contador == 1 ) {
-        // solo hay un usuario con esos datos
-        $_SESSION['user_id'] = $fila['idUsuario'];
-        $tipo = "";
-        $destino = "";
-        if( is_null( $fila['Docente_idDocente'] ) ) {
+    $fila = mysqli_fetch_assoc($resultado);     //recupera la fila que cumpla con los datos
+        $_SESSION['user_id'] = $fila['idUsuario'];      //guardamos una variable (user_id) en la sesión que almacenará el idUsuario
+        if( is_null( $fila['Docente_idDocente'] ) ) {   //si idDocente es nulo
+            $_SESSION['rude'] = $fila['Estudiante_rude'];
             $_SESSION['user_tipo'] = 'Estudiante';
             $_SESSION['user_nombre'] = $fila['nombre_usr'];
             header('Location: ./inicioEstudiante.php');
@@ -41,11 +31,8 @@ if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
             $_SESSION['user_nombre'] = $fila['nombre_usr'];
             header('Location: ./inicioDocente.php');
         }
-    } else {
-        // dos usuarios con esos datos ???
-        echo "error por duplicidad de datos";
-        die();
-    }
+    
+
 } else {
     header('Location: ./login.php');
 }
