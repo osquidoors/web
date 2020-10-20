@@ -43,7 +43,7 @@ $(function(){
     $("#curso").change(function(){  // usamos # porque estamos llamando al id en la linea 15 usamos id="materia" 
         // obtenemos el actual valor seleccionado del combobox (idMateria)
         var cursoSeleccionado = $(this).val();      //en la variable cursoSeleccionado almacenamos el IdCurso ($(this).val() función de jquery que obtiene el valor de lo seleccionado)
-        location.href = './llenarNotas.php?curso='+cursoSeleccionado;
+        location.href = './estudiantesDeCurso.php?curso='+cursoSeleccionado;
     });
 });
 </script>   <!-- fin de javascript -->
