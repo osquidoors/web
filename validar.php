@@ -27,8 +27,13 @@ if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
         }
         
         if( is_null( $fila['Estudiante_rude'] ) ) {
+            $_idDocente = $fila['Docente_idDocente'];
+            $sql = "SELECT * FROM docente WHERE idDocente='$_idDocente'";
+            $resultadoDocente = mysqli_query($conexion, $sql);
+            $filaDocente = mysqli_fetch_assoc($resultadoDocente);
+            $_SESSION['docente'] = $_idDocente;
             $_SESSION['user_tipo'] = 'Docente';
-            $_SESSION['user_nombre'] = $fila['nombre_usr'];
+            $_SESSION['user_nombre'] = $filaDocente['nombre_doc'].' '.$filaDocente['app_doc'].''.$filaDocente['app'];
             header('Location: ./inicioDocente.php');
         }
     
