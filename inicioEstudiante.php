@@ -7,9 +7,14 @@ if ( isset( $_SESSION['user_id'] ) ) {      //isset función que verifica la exi
 ?>
 <html>
 <body>
-<?php echo "Bienvenido: ".$_SESSION['user_tipo']." - ".$_SESSION['user_nombre'];?>
+<?php echo "Bienvenido: ".$_SESSION['user_tipo']." - ".$_SESSION['user_nombre'].' ++ '.$_SESSION['rude']; ?>
 <br/>
 <hr/>
+<a href="">Generar boleta</a>
+<br/>
+<br/>
+Consulta nota de una materia:
+<br/><br/>
 <form>
 Materia: 
 <select id="materia">     <!--  select es un combobox id es el identificador del combobox-->
@@ -34,38 +39,18 @@ mysqli_close($conexion);
 ?>
 </select>
 </form>
-<br/>
-
-Docente: 
-<select id="docentes">     <!--  select es un combobox-->
-<!-- id es un identificador que utilizaremos para aumnetar contenido al combobox. -->
-    <option value="0">Seleccionar docente</option>      <!--  la 1ra opción "Selec..."-->
-</selected>
 </body>
 
 <!-- jquery es una libreria de javascript -->
 <script src="./jquery-3.5.1.min.js"></script>   <!-- jquery es una librería que facilita el uso de funciones de jscript-->
 <script type="text/javascript">     //inicio de javascript
 $(function(){
-    // evento que es llamado cuando cambiamos el combobox materia
-    $("#materia").change(function(){  // usamos # porque estamos llamando al id en la linea 15 usamos id="materia" 
-        // obtenemos el actual valor seleccionado del combobox (idMateria)
-        var materiaSeleccionada = $(this).val();      //en la variable materiaId almacenamos el IdMateria ($(this).val() función de jquery que obtiene el valor de lo seleccionado)
-        
-        $.ajax({ // hacemos una llamada ajax, una llamada asyncrona (comunicación con el servidor en 2do plano) o ejecutando un proceso de fondo y actualizando valores en tiempo real
-            // hacemos una llamada ajax al archivos obtener docente, enviando la variable materia como una variable GET
-            url: "obtenerDocente.php?idmateria=" + materiaSeleccionada,
-        }).done(function(respuesta) {       //"respuesta" obtiene o almacena el resultado que envía "obtenerDocente.php" que es un texto
-            
-            $("#docentes option").remove(); // limpiamos el dropdown
-            // nuestra llamada es terminada, tenemos los datos retornados
-            var docentes = JSON.parse(respuesta);      //JSON hace un parceo de "respuesta" que es un texto a arreglo en javascript
-            // hacemos un ciclo similar while a través de los datos retornados
-            $.each(docentes, function(codDocente, nom_docente) {       //each = while (mientras haya docentes) --> (idDocente, nombre_doc)
-                // a cada opción del combobox le damos value=codDocente y como texto=nom_docente
-                $('#docentes').append($('<option>', {value:codDocente, text:nom_docente}));
-            });
-
+    $("#materia").change(function(){
+        var materiaSeleccionada = $(this).val();
+        $.ajax({
+            url: "obtenerNotaDeMateria.php?idmateria="+materiaSeleccionada,
+        }).done(function(respuesta) {
+            alert(respuesta)
         });
     });
 });
