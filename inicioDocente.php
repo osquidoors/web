@@ -36,7 +36,7 @@ mysqli_close($conexion);
 <br><br><br>
 Materia: 
 <select id="materia">     <!--  select es un combobox id es el identificador del combobox-->
-    <option value="0">Seleccionar materia</option>      <!--  la 1ra opción "Selec..."-->
+    <option value="0">-- Seleccionar materia --</option>      <!--  la 1ra opción "Selec..."-->
 <?php 
 $conexion = mysqli_connect("localhost", "root", "", "mi_prueba");
 
@@ -62,11 +62,25 @@ mysqli_close($conexion);
 <script src="./jquery-3.5.1.min.js"></script>   <!-- jquery es una librería que facilita el uso de funciones de jscript-->
 <script type="text/javascript">     //inicio de javascript
 $(function(){
-    // evento que es llamado cuando cambiamos el combobox materia
-    $("#curso").change(function(){  // usamos # porque estamos llamando al id en la linea 15 usamos id="materia" 
+    var cursoSeleccionado = -1;
+    $("#curso").change(function(){
+        cursoSeleccionado = $(this).val();
+        $.ajax({
+            url: "obtenerMateriaDeCurso.php?idcurso=" + cursoSeleccionado,
+        }).done(function(respuesta) {
+            $("#materia option").remove();
+            var materias = JSON.parse(respuesta);
+            $.each(materias, function(cod_curso, nom_curso) {
+                $('#materia').append($('<option>', {value:cod_curso, text:nom_curso}));
+            });
+
+        });
+    });
+    
+    $("#materia").change(function(){  // usamos # porque estamos llamando al id en la linea 15 usamos id="materia" 
         // obtenemos el actual valor seleccionado del combobox (idMateria)
-        // var cursoSeleccionado = $(this).val();      //en la variable cursoSeleccionado almacenamos el IdCurso ($(this).val() función de jquery que obtiene el valor de lo seleccionado)
-        // location.href = './estudiantesDeCurso.php?curso='+cursoSeleccionado;
+        var materiaSeleccionada = $(this).val();      //en la variable cursoSeleccionado almacenamos el IdCurso ($(this).val() función de jquery que obtiene el valor de lo seleccionado)
+        location.href = './estudiantesDeMateria.php?curso='+cursoSeleccionado+'&materia='+materiaSeleccionada;
     });
 });
 </script>   <!-- fin de javascript -->

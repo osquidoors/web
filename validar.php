@@ -33,7 +33,7 @@ if ( !empty($resultado) && mysqli_num_rows($resultado) > 0 ) {
             $filaDocente = mysqli_fetch_assoc($resultadoDocente);
             $_SESSION['docente'] = $_idDocente;
             $_SESSION['user_tipo'] = 'Docente';
-            $_SESSION['user_nombre'] = $filaDocente['nombre_doc'].' '.$filaDocente['app_doc'].''.$filaDocente['app'];
+            $_SESSION['user_nombre'] = $filaDocente['nombre_doc'].' '.$filaDocente['app_doc'].' '.$filaDocente['apm_doc'];
             header('Location: ./inicioDocente.php');
         }
     
